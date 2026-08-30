@@ -2,6 +2,8 @@
 
 一个基于 [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) 的 Server，让你能在 VS Code Copilot Chat 中通过自然语言控制 [Gopeed](https://github.com/GopeedLab/gopeed) 下载管理器。
 
+> **关于 Gopeed**：本项目的被控对象是开源下载管理器 [Gopeed](https://github.com/GopeedLab/gopeed)（由 `GopeedLab` 维护，采用 [GPL-3.0](https://github.com/GopeedLab/gopeed/blob/main/LICENSE) 许可证）。本 Server 仅通过 Gopeed 公开的 **REST API** 与之通信，不修改、不嵌入其任何源代码，因此本仓库以 MIT 许可证独立发布。使用前请先安装并运行 Gopeed 本体。
+
 ## 功能介绍
 
 本 MCP Server 封装了 Gopeed 的 REST API，提供以下 8 个工具：
@@ -158,4 +160,6 @@ curl http://127.0.0.1:12345/api/v1/tasks
 
 ## 许可证
 
-MIT
+本项目（Gopeed MCP Server）以 **MIT** 许可证发布，详见 [LICENSE](./LICENSE)。
+
+被控对象 [Gopeed](https://github.com/GopeedLab/gopeed) 本身是独立的开源项目，采用 **GPL-3.0** 许可证（© GopeedLab 及其贡献者）。本 Server 仅通过网络调用其公开 REST API 进行集成，不构成对 Gopeed 源代码的修改或衍生，亦不随本仓库分发 Gopeed 的任何代码。如使用 Gopeed 本体，请遵守其对应的许可证条款。
