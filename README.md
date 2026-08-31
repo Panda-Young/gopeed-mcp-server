@@ -41,10 +41,19 @@
    source .venv/bin/activate
    ```
 
-3. 安装依赖：
-   ```bash
-   pip install -r requirements.txt
-   ```
+3. 安装依赖（二选一）：
+
+   - 方式 A：从源码安装依赖
+     ```bash
+     pip install -r requirements.txt
+     ```
+
+   - 方式 B：作为 Python 包安装（推荐，可用于 `uvx` 一键启动）
+     ```bash
+     pip install .
+     # 或发布后： pip install gopeed-mcp-server
+     ```
+     安装后会得到 `gopeed-mcp-server` 命令，可用 `uvx gopeed-mcp-server` 直接启动。
 
 4. （可选）配置环境变量。复制 `.env.example` 为 `.env` 并按需修改：
    ```bash
@@ -57,33 +66,56 @@
 
 ## VS Code Copilot Chat 配置方法
 
-1. 打开 VS Code，按 `Ctrl+Shift+P`（macOS 为 `Cmd+Shift+P`），输入并选择 **"Preferences: Open User Settings (JSON)"**。
+**方式一：从 MCP Gallery 安装（推荐，已上架后）**
 
-2. 在 `settings.json` 中添加 `mcpServers` 配置：
+1. 打开 Extensions 视图（`Ctrl+Shift+X`），搜索 `@mcp gopeed`。
+2. 选择 **Install** 安装到用户配置，按提示信任并启动即可。
+
+**方式二：手动配置 `mcp.json`**
+
+VS Code 1.99+ 使用专用的 `mcp.json`（而不是 `settings.json` 的 `mcpServers` 字段）。
+
+1. 按 `Ctrl+Shift+P`，运行 **`MCP: Open User Configuration`**（或在工作区创建 `.vscode/mcp.json`）。
+2. 添加如下配置（使用 `uvx` 启动，无需本地路径）：
 
    ```json
-   "mcpServers": {
-     "gopeed": {
-       "command": "C:\\path\\to\\gopeed-mcp-server\\.venv\\Scripts\\python.exe",
-       "args": [
-         "C:\\path\\to\\gopeed-mcp-server\\server.py"
-       ],
-       "env": {
-         "GOPEED_API_URL": "http://127.0.0.1/api/v1"
+   {
+     "servers": {
+       "gopeed": {
+         "command": "uvx",
+         "args": ["gopeed-mcp-server"],
+         "env": {
+           "GOPEED_API_URL": "http://127.0.0.1/api/v1"
+         }
+       }
+     }
+   }
+   ```
+
+   若未发布到 PyPI，可改用本地源码方式：
+
+   ```json
+   {
+     "servers": {
+       "gopeed": {
+         "command": "python",
+         "args": ["<仓库绝对路径>/server.py"],
+         "env": {
+           "GOPEED_API_URL": "http://127.0.0.1/api/v1"
+         }
        }
      }
    }
    ```
 
    > **注意**：
-   > - `command` 使用虚拟环境中 Python 的**绝对路径**（`<仓库>/.venv/Scripts/python.exe`），避免系统 PATH 中没有 `python` 导致启动失败。
-   > - `args` 中的路径需要使用双反斜杠 `\\` 转义，或使用正斜杠 `/`。
    > - `GOPEED_API_URL` 推荐留空端口（`http://127.0.0.1/api/v1`），server 会自动发现 Gopeed 当前监听端口；若已固定端口则写完整地址。
    > - 如果 Gopeed 配置了 API 令牌，在 `env` 中添加 `"GOPEED_API_TOKEN": "你的令牌"`。
+   > - Windows 沙箱（sandbox）目前不可用，本地 stdio server 直接运行。
 
-3. 保存 `settings.json`，重启 VS Code。
+3. 保存 `mcp.json`，重启 VS Code（或 `Developer: Reload Window`）。
 
-4. 验证配置：打开 Copilot Chat，输入 `@gopeed` 或直接描述需求，Copilot 应能识别并调用 Gopeed 工具。也可以在 VS Code 的 MCP 面板中查看 `gopeed` server 是否处于运行状态。
+4. 验证配置：打开 Copilot Chat，输入 `@gopeed` 或直接描述需求，Copilot 应能识别并调用 Gopeed 工具。也可在 MCP 面板中查看 `gopeed` server 状态。
 
 ## 使用示例
 
@@ -112,8 +144,10 @@ gopeed-mcp-server/
 ├── server.py              # MCP Server 主入口，定义所有 MCP Tools
 ├── gopeed_client.py       # Gopeed REST API 客户端封装
 ├── config.py              # 配置管理（从环境变量读取）
+├── pyproject.toml         # 打包配置（提供 gopeed-mcp-server 命令）
 ├── requirements.txt       # Python 依赖
 ├── .env.example           # 环境变量示例
+├── icon.png               # MCP Gallery 图标
 └── README.md              # 本文件
 ```
 
@@ -121,8 +155,8 @@ gopeed-mcp-server/
 
 ### 1. Copilot Chat 无法调用 Gopeed 工具
 
-- 确认 `settings.json` 中 `mcpServers.gopeed` 配置的路径正确，使用双反斜杠 `\\`。
-- 确认 `command` 指向虚拟环境中 Python 的**绝对路径**（如 `...\.venv\Scripts\python.exe`），而非裸 `python`（系统 PATH 可能无 `python`）。
+- 确认 `mcp.json` 中 `servers.gopeed` 配置正确（`uvx gopeed-mcp-server` 或本地 `python server.py`），路径使用正斜杠或双反斜杠 `\\`。
+- 若使用本地源码方式，确认 `command` 指向可运行的 Python（如 `...\.venv\Scripts\python.exe` 或裸 `python`），而非错误路径。
 - 重启 VS Code 后再试。
 - 在 VS Code 中打开 **Output** 面板，选择 **MCP** 通道查看 gopeed server 的日志输出。
 
@@ -163,3 +197,12 @@ curl http://127.0.0.1:12345/api/v1/tasks
 本项目（Gopeed MCP Server）以 **MIT** 许可证发布，详见 [LICENSE](./LICENSE)。
 
 被控对象 [Gopeed](https://github.com/GopeedLab/gopeed) 本身是独立的开源项目，采用 **GPL-3.0** 许可证（© GopeedLab 及其贡献者）。本 Server 仅通过网络调用其公开 REST API 进行集成，不构成对 Gopeed 源代码的修改或衍生，亦不随本仓库分发 Gopeed 的任何代码。如使用 Gopeed 本体，请遵守其对应的许可证条款。
+
+## 发布与上架
+
+本 server 已打包为 Python 包（见 `pyproject.toml`），提供 `gopeed-mcp-server` 命令，可被 VS Code、社区 registry 等直接引用。
+
+- **PyPI**：`pip install gopeed-mcp-server` 或直接 `uvx gopeed-mcp-server`（需要先发布到 PyPI）。
+- **VS Code MCP Gallery**：向 [`microsoft/vscode-mcp-registry`](https://github.com/microsoft/vscode-mcp-registry) 提交 PR，在 `servers/gopeed-mcp-server/` 下添加 metadata（含 `displayName`、描述、`repository`、启动方式 `uvx gopeed-mcp-server` 与本 `icon.png`）。合并后用户即可在 Extensions 视图搜 `@mcp gopeed` 一键安装。
+- **社区 registry**：可同步提交到 Smithery / Glama 等，审核更快、更易被搜索到。
+- **手动分享**：任何已安装本包的环境，把上面的 `mcp.json` 片段加入 `mcp.json` 即可使用。

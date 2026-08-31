@@ -229,6 +229,10 @@ def update_config(
 # 入口
 # ======================================================================
 
-if __name__ == "__main__":
+def main() -> None:
     # 通过 stdio 传输启动 MCP Server（VS Code Copilot Chat 默认支持）
     mcp.run(transport="stdio")
+
+
+if __name__ == "__main__":
+    main()
