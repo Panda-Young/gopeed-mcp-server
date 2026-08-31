@@ -202,7 +202,18 @@ curl http://127.0.0.1:12345/api/v1/tasks
 
 本 server 已打包为 Python 包（见 `pyproject.toml`），提供 `gopeed-mcp-server` 命令，可被 VS Code、社区 registry 等直接引用。
 
-- **PyPI**：`pip install gopeed-mcp-server` 或直接 `uvx gopeed-mcp-server`（需要先发布到 PyPI）。
-- **VS Code MCP Gallery**：向 [`microsoft/vscode-mcp-registry`](https://github.com/microsoft/vscode-mcp-registry) 提交 PR，在 `servers/gopeed-mcp-server/` 下添加 metadata（含 `displayName`、描述、`repository`、启动方式 `uvx gopeed-mcp-server` 与本 `icon.png`）。合并后用户即可在 Extensions 视图搜 `@mcp gopeed` 一键安装。
-- **社区 registry**：可同步提交到 Smithery / Glama 等，审核更快、更易被搜索到。
+- **GitHub（已公开）**：仓库即发布页。别人在 GitHub 搜到后，按上面的 `mcp.json` 片段手动添加即可使用。
+- **PyPI**：`pip install gopeed-mcp-server` 或直接 `uvx gopeed-mcp-server`（需先发布到 PyPI，见下文）。
+- **Glama**：打开 https://glama.ai/mcp/register ，粘贴本仓库 URL（`https://github.com/Panda-Young/gopeed-mcp-server`），会自动读取仓库根的 `mcp.json`。
+- **Smithery**：本地 stdio server 用 CLI 发布（非网页表单）。安装 `@smithery/cli` 后，在仓库目录执行 `smithery login` 再 `smithery mcp publish . -n @<你的用户名>/gopeed-mcp-server`（会读取 `smithery.yaml`）。
+- **VS Code MCP Gallery**：VS Code 内置的 MCP Gallery 目前为微软托管的精选列表，**没有公开的投稿入口**，个人开发者暂无法直接上架。用户可从上面的 GitHub / PyPI / Glama / Smithery 任一渠道获取并手动配置到 `mcp.json`。
 - **手动分享**：任何已安装本包的环境，把上面的 `mcp.json` 片段加入 `mcp.json` 即可使用。
+
+### 发布到 PyPI
+
+```bash
+# 本地已构建好 dist/ 下的 wheel 与 sdist
+$env:TWINE_USERNAME="__token__"
+$env:TWINE_PASSWORD="pypi-你的PyPI令牌"   # 从 https://pypi.org/manage/account/token/ 获取
+.venv/Scripts/twine.exe upload dist/*
+```
