@@ -236,7 +236,7 @@ class GopeedClient:
         Returns:
             操作结果。
         """
-        self._request("POST", f"/tasks/{task_id}/pause")
+        self._request("PUT", f"/tasks/{task_id}/pause")
         return {"id": task_id, "message": f"任务 {task_id} 已暂停"}
 
     def resume_task(self, task_id: str) -> dict:
@@ -248,7 +248,7 @@ class GopeedClient:
         Returns:
             操作结果。
         """
-        self._request("POST", f"/tasks/{task_id}/resume")
+        self._request("PUT", f"/tasks/{task_id}/continue")
         return {"id": task_id, "message": f"任务 {task_id} 已恢复"}
 
     def delete_task(self, task_id: str, force: bool = False) -> dict:
