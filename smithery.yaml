@@ -1,0 +1,31 @@
+# Smithery deployment configuration for Gopeed MCP Server
+# Docs: https://smithery.ai/docs/build/publish
+
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      GOPEED_API_URL:
+        type: string
+        description: Gopeed REST API base URL. Leave the port empty so the server auto-discovers the random Gopeed port (http://127.0.0.1/api/v1).
+        default: http://127.0.0.1/api/v1
+      GOPEED_API_TOKEN:
+        type: string
+        description: Optional Gopeed API token, only needed if Gopeed enforces token auth.
+        default: ""
+      GOPEED_TIMEOUT:
+        type: number
+        description: HTTP request timeout in seconds.
+        default: 10
+    required: []
+  commandFunction: |-
+    (config) => ({
+      command: 'uvx',
+      args: ['gopeed-mcp-server'],
+      env: {
+        GOPEED_API_URL: config.GOPEED_API_URL || 'http://127.0.0.1/api/v1',
+        GOPEED_API_TOKEN: config.GOPEED_API_TOKEN || '',
+        GOPEED_TIMEOUT: String(config.GOPEED_TIMEOUT || 10)
+      }
+    })

@@ -1,0 +1,37 @@
+{
+  "displayName": "Gopeed",
+  "description": "Control the Gopeed download manager from your AI agent — create/pause/resume/delete download tasks, list tasks, and read or update Gopeed config via natural language.",
+  "tags": ["download", "gopeed", "downloader", "bittorrent", "automation"],
+  "icon": "icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Panda-Young/gopeed-mcp-server"
+  },
+  "homepage": "https://github.com/Panda-Young/gopeed-mcp-server#readme",
+  "packages": [
+    {
+      "registry": "pypi",
+      "name": "gopeed-mcp-server",
+      "runtime": "uvx",
+      "command": "uvx",
+      "args": ["gopeed-mcp-server"]
+    }
+  ],
+  "configuration": {
+    "GOPEED_API_URL": {
+      "type": "string",
+      "description": "Gopeed REST API base URL. Leave the port empty so the server auto-discovers the random Gopeed port.",
+      "default": "http://127.0.0.1/api/v1"
+    },
+    "GOPEED_API_TOKEN": {
+      "type": "string",
+      "description": "Optional Gopeed API token, only needed if Gopeed enforces token auth.",
+      "default": ""
+    },
+    "GOPEED_TIMEOUT": {
+      "type": "number",
+      "description": "HTTP request timeout in seconds.",
+      "default": 10
+    }
+  }
+}

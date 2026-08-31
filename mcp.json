@@ -1,0 +1,12 @@
+{
+  "servers": {
+    "gopeed": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["gopeed-mcp-server"],
+      "env": {
+        "GOPEED_API_URL": "http://127.0.0.1/api/v1"
+      }
+    }
+  }
+}
