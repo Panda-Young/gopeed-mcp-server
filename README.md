@@ -1,6 +1,6 @@
 # Gopeed MCP Server
 
-一个基于 [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) 的 Server，让你能在 VS Code Copilot Chat 中通过自然语言控制 [Gopeed](https://github.com/GopeedLab/gopeed) 下载管理器。
+一个基于 [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) 的 Server，让你能在各种 AI Agent / 智能体中通过自然语言控制 [Gopeed](https://github.com/GopeedLab/gopeed) 下载管理器。它遵循标准 MCP 协议，可无缝接入任意兼容 MCP 的客户端，例如 VS Code Copilot Chat、WorkBuddy、Trae 等。
 
 > **关于 Gopeed**：本项目的被控对象是开源下载管理器 [Gopeed](https://github.com/GopeedLab/gopeed)（由 `GopeedLab` 维护，采用 [GPL-3.0](https://github.com/GopeedLab/gopeed/blob/main/LICENSE) 许可证）。本 Server 仅通过 Gopeed 公开的 **REST API** 与之通信，不修改、不嵌入其任何源代码，因此本仓库以 MIT 许可证独立发布。使用前请先安装并运行 Gopeed 本体。
 
@@ -23,7 +23,7 @@
 
 - Python 3.10+
 - Gopeed 已安装并运行（API 端口每次启动随机分配，无需手动指定）
-- VS Code 安装了 GitHub Copilot Chat 扩展
+- 任意兼容 MCP 的 AI Agent / 智能体客户端（如 VS Code Copilot Chat、WorkBuddy、Trae 等）
 
 ## 安装步骤
 
@@ -200,7 +200,7 @@ curl http://127.0.0.1:12345/api/v1/tasks
 
 ## 发布与上架
 
-本 server 已打包为 Python 包（见 `pyproject.toml`），提供 `gopeed-mcp-server` 命令，可被 VS Code、社区 registry 等直接引用。
+本 server 已打包为 Python 包（见 `pyproject.toml`），提供 `gopeed-mcp-server` 命令，可被任何兼容 MCP 的 AI Agent / 智能体客户端、社区 registry 等直接引用。
 
 - **GitHub（已公开）**：仓库即发布页。别人在 GitHub 搜到后，按上面的 `mcp.json` 片段手动添加即可使用。
 - **PyPI**：`pip install gopeed-mcp-server` 或直接 `uvx gopeed-mcp-server`（需先发布到 PyPI，见下文）。

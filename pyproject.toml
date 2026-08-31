@@ -5,15 +5,14 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "gopeed-mcp-server"
 version = "0.1.0"
-description = "MCP server to control the Gopeed download manager from VS Code Copilot Chat"
+description = "MCP server to control the Gopeed download manager from any MCP-compatible AI Agent (VS Code Copilot Chat, WorkBuddy, Trae, etc.)"
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "MIT" }
+license = "MIT"
 authors = [{ name = "Panda-Young" }]
-keywords = ["mcp", "gopeed", "download", "copilot", "vscode"]
+keywords = ["mcp", "gopeed", "download", "ai-agent", "copilot", "workbuddy", "trae", "vscode"]
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
 dependencies = [
@@ -31,3 +30,4 @@ gopeed-mcp-server = "server:main"
 
 [tool.setuptools]
 py-modules = ["server", "gopeed_client", "config"]
+license-files = ["LICENSE"]
