@@ -6,7 +6,7 @@
 
 ## 功能介绍
 
-本 MCP Server 封装了 Gopeed 的 REST API，提供以下 8 个工具：
+本 MCP Server 封装了 Gopeed 的 REST API，提供以下 10 个工具：
 
 | 工具 | 说明 |
 |------|------|
@@ -15,7 +15,9 @@
 | `get_task_detail` | 获取单个任务的详细信息 |
 | `pause_task` | 暂停指定任务 |
 | `resume_task` | 恢复（继续）指定任务 |
-| `delete_task` | 删除任务，可选同时删除已下载文件 |
+| `delete_task` | 删除单个任务，可选同时删除已下载文件 |
+| `delete_completed_tasks` | 删除所有已完成的历史任务 |
+| `delete_done_tasks` | `delete_completed_tasks` 的别名 |
 | `get_config` | 获取 Gopeed 当前配置（下载目录、连接数、代理等） |
 | `update_config` | 更新 Gopeed 配置（只传需要修改的字段） |
 
@@ -128,6 +130,8 @@ VS Code 1.99+ 使用专用的 `mcp.json`（而不是 `settings.json` 的 `mcpSer
 | "继续任务 abc123" | 恢复任务 |
 | "删除任务 abc123" | 删除任务（保留文件） |
 | "删除任务 abc123，连文件一起删掉" | 强制删除任务和文件 |
+| "删除已完成的历史任务" | 删除所有已完成任务 |
+| "清理历史下载记录，连文件也删掉" | 强制清理所有已完成任务及文件 |
 | "Gopeed 当前配置是什么？" | 获取配置 |
 | "把并发连接数改成 32" | 更新配置 |
 | "把下载目录改成 D:\\Downloads" | 更新下载目录 |

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "gopeed-mcp-server"
-version = "0.2.0"
+version = "0.3.0"
 description = "MCP server to control the Gopeed download manager from any MCP-compatible AI Agent (VS Code Copilot Chat, WorkBuddy, Trae, etc.)"
 readme = "README.md"
 requires-python = ">=3.10"

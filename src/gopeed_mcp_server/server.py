@@ -143,6 +143,29 @@ def delete_task(task_id: str, force: bool = False) -> str:
 
 
 @mcp.tool()
+def delete_completed_tasks(force: bool = False) -> str:
+    """Delete all completed historical download tasks.
+
+    Args:
+        force: Also delete downloaded files for each completed task.
+    """
+    try:
+        result = get_client().delete_completed_tasks(force=force)
+        return f"🧹 {result['message']}"
+    except Exception as exc:
+        return handle_error(exc)
+
+
+@mcp.tool()
+def delete_done_tasks(force: bool = False) -> str:
+    """Alias for deleting completed download tasks."""
+    try:
+        return delete_completed_tasks(force=force)
+    except Exception as exc:
+        return handle_error(exc)
+
+
+@mcp.tool()
 def get_config() -> str:
     """Get current Gopeed configuration."""
     try:

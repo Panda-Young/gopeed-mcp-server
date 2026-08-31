@@ -69,6 +69,41 @@ class GopeedClient:
             msg += " (also removed downloaded files)"
         return {"id": task_id, "message": msg}
 
+    def delete_completed_tasks(self, force: bool = False) -> dict:
+        """Delete all completed historical tasks."""
+        tasks = self.list_tasks()
+        completed = [
+            task for task in tasks
+            if str(task.get("status", "")).lower() == "done"
+        ]
+        if not completed:
+            try:
+                completed = self.list_tasks(status="done")
+            except Exception:
+                completed = []
+
+        deleted_ids: list[str] = []
+        for task in completed:
+            task_id = task.get("id")
+            if not task_id:
+                continue
+            self.delete_task(task_id, force=force)
+            deleted_ids.append(task_id)
+
+        msg = f"Deleted {len(deleted_ids)} completed tasks"
+        if force:
+            msg += " and removed their downloaded files"
+        return {
+            "status": "done",
+            "deleted_count": len(deleted_ids),
+            "deleted_ids": deleted_ids,
+            "message": msg,
+        }
+
+    def delete_done_tasks(self, force: bool = False) -> dict:
+        """Backward-compatible alias for deleting completed tasks."""
+        return self.delete_completed_tasks(force=force)
+
     # ------------------------------------------------------------------
     # Configuration management
     # ------------------------------------------------------------------
