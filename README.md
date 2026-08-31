@@ -95,7 +95,7 @@ VS Code 1.99+ 使用专用的 `mcp.json`（而不是 `settings.json` 的 `mcpSer
      "servers": {
        "gopeed": {
          "command": "python",
-         "args": ["<仓库绝对路径>/server.py"],
+         "args": ["-m", "gopeed_mcp_server"],
          "env": {
            "GOPEED_API_URL": "http://127.0.0.1:7766/api/v1"
          }
@@ -137,16 +137,17 @@ VS Code 1.99+ 使用专用的 `mcp.json`（而不是 `settings.json` 的 `mcpSer
 
 ```
 gopeed-mcp-server/
-├── server.py              # MCP Server 主入口，定义所有 MCP Tools
 ├── src/
 │   └── gopeed_mcp_server/ # Python package 源码
 │       ├── __init__.py    # 包入口，导出公共 API
+│       ├── __main__.py    # 支持 python -m gopeed_mcp_server 启动
 │       ├── config.py      # 配置管理（从环境变量读取）
 │       ├── constants.py   # 状态常量定义
 │       ├── client.py      # Gopeed REST API 客户端封装
 │       ├── transport.py   # HTTP 传输层（自动重发现）
 │       ├── discovery.py   # 端口自动发现逻辑
-│       └── exceptions.py  # 异常类型定义
+│       ├── exceptions.py  # 异常类型定义
+│       └── server.py      # MCP Server 主入口，定义所有 MCP Tools
 ├── pyproject.toml         # 打包配置（提供 gopeed-mcp-server 命令）
 ├── requirements.txt       # Python 依赖
 ├── .env.example           # 环境变量示例
@@ -158,7 +159,7 @@ gopeed-mcp-server/
 
 ### 1. Copilot Chat 无法调用 Gopeed 工具
 
-- 确认 `mcp.json` 中 `servers.gopeed` 配置正确（`uvx gopeed-mcp-server` 或本地 `python server.py`），路径使用正斜杠或双反斜杠 `\\`。
+- 确认 `mcp.json` 中 `servers.gopeed` 配置正确（`uvx gopeed-mcp-server` 或本地 `python -m gopeed_mcp_server`），路径使用正斜杠或双反斜杠 `\\`。
 - 若使用本地源码方式，确认 `command` 指向可运行的 Python（如 `...\.venv\Scripts\python.exe` 或裸 `python`），而非错误路径。
 - 重启 VS Code 后再试。
 - 在 VS Code 中打开 **Output** 面板，选择 **MCP** 通道查看 gopeed server 的日志输出。
