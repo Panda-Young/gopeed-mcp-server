@@ -50,8 +50,7 @@
 
    - 方式 B：作为 Python 包安装（推荐，可用于 `uvx` 一键启动）
      ```bash
-     pip install .
-     # 或发布后： pip install gopeed-mcp-server
+     pip install gopeed-mcp-server
      ```
      安装后会得到 `gopeed-mcp-server` 命令，可用 `uvx gopeed-mcp-server` 直接启动。
 
@@ -64,14 +63,11 @@
    - `GOPEED_API_TOKEN`：API 令牌（可选，Gopeed 配置了令牌时需要）
    - `GOPEED_TIMEOUT`：请求超时秒数，默认 `10`
 
-## VS Code Copilot Chat 配置方法
+## 客户端配置方法
 
-**方式一：从 MCP Gallery 安装（推荐，已上架后）**
+以下以 VS Code Copilot Chat 为例，其他兼容 MCP 的客户端（WorkBuddy、Trae 等）配置方式类似。
 
-1. 打开 Extensions 视图（`Ctrl+Shift+X`），搜索 `@mcp gopeed`。
-2. 选择 **Install** 安装到用户配置，按提示信任并启动即可。
-
-**方式二：手动配置 `mcp.json`**
+**手动配置 `mcp.json`**
 
 VS Code 1.99+ 使用专用的 `mcp.json`（而不是 `settings.json` 的 `mcpServers` 字段）。
 
@@ -119,7 +115,7 @@ VS Code 1.99+ 使用专用的 `mcp.json`（而不是 `settings.json` 的 `mcpSer
 
 ## 使用示例
 
-在 VS Code Copilot Chat 中，你可以这样说：
+在任意兼容 MCP 的客户端中，你可以用自然语言这样说：
 
 | 你说的话 | 触发的操作 |
 |----------|-----------|
@@ -147,7 +143,7 @@ gopeed-mcp-server/
 ├── pyproject.toml         # 打包配置（提供 gopeed-mcp-server 命令）
 ├── requirements.txt       # Python 依赖
 ├── .env.example           # 环境变量示例
-├── icon.png               # MCP Gallery 图标
+├── icon.png               # 包 / 仓库图标
 └── README.md              # 本文件
 ```
 
@@ -200,20 +196,22 @@ curl http://127.0.0.1:12345/api/v1/tasks
 
 ## 发布与上架
 
-本 server 已打包为 Python 包（见 `pyproject.toml`），提供 `gopeed-mcp-server` 命令，可被任何兼容 MCP 的 AI Agent / 智能体客户端、社区 registry 等直接引用。
+本 server 已发布到以下渠道，用户可直接获取并配置：
 
-- **GitHub（已公开）**：仓库即发布页。别人在 GitHub 搜到后，按上面的 `mcp.json` 片段手动添加即可使用。
-- **PyPI**：`pip install gopeed-mcp-server` 或直接 `uvx gopeed-mcp-server`（需先发布到 PyPI，见下文）。
-- **Glama**：打开 https://glama.ai/mcp/register ，粘贴本仓库 URL（`https://github.com/Panda-Young/gopeed-mcp-server`），会自动读取仓库根的 `mcp.json`。
-- **Smithery**：本地 stdio server 用 CLI 发布（非网页表单）。安装 `@smithery/cli` 后，在仓库目录执行 `smithery login` 再 `smithery mcp publish . -n @<你的用户名>/gopeed-mcp-server`（会读取 `smithery.yaml`）。
+- **GitHub（已公开）**：https://github.com/Panda-Young/gopeed-mcp-server —— 仓库即发布页，按上面的 `mcp.json` 片段手动添加即可使用。
+- **PyPI（已发布）**：`pip install gopeed-mcp-server` 或直接 `uvx gopeed-mcp-server`，见 https://pypi.org/project/gopeed-mcp-server/ 。
+- **Glama**：打开 https://glama.ai/mcp/register ，粘贴本仓库 URL，会自动读取仓库根的 `mcp.json`。
+- **Smithery**：本地 stdio server 用 CLI 发布（非网页表单）。安装 `@smithery/cli` 后，在仓库目录执行 `smithery login` 再 `smithery mcp publish . -n @Panda-Young/gopeed-mcp-server`（会读取 `smithery.yaml`）。
 - **VS Code MCP Gallery**：VS Code 内置的 MCP Gallery 目前为微软托管的精选列表，**没有公开的投稿入口**，个人开发者暂无法直接上架。用户可从上面的 GitHub / PyPI / Glama / Smithery 任一渠道获取并手动配置到 `mcp.json`。
 - **手动分享**：任何已安装本包的环境，把上面的 `mcp.json` 片段加入 `mcp.json` 即可使用。
 
-### 发布到 PyPI
+### 发布新版本到 PyPI
+
+修改 `pyproject.toml` 中的 `version` 后，重新构建并上传：
 
 ```bash
-# 本地已构建好 dist/ 下的 wheel 与 sdist
-$env:TWINE_USERNAME="__token__"
-$env:TWINE_PASSWORD="pypi-你的PyPI令牌"   # 从 https://pypi.org/manage/account/token/ 获取
-.venv/Scripts/twine.exe upload dist/*
+python -m build
+twine upload dist/*
 ```
+
+> 上传凭证请勿写入本仓库。推荐在用户目录 `~/.pypirc` 配置 `[pypi]` 的 `username = __token__` 与 `password`，或使用环境变量 `TWINE_USERNAME` / `TWINE_PASSWORD`。令牌从 https://pypi.org/manage/account/token/ 获取。
