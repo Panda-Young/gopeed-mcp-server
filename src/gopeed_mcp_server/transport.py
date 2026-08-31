@@ -37,6 +37,7 @@ class GopeedTransport:
         try:
             resp = self._client.request(method, url, headers=headers, **kwargs)
         except (httpx.ConnectError, httpx.TimeoutException) as exc:
+            # ConnectError / Timeout：Gopeed 可能重启换端口，先清缓存再重发现
             result = self._try_rediscover(method, path, kwargs, headers)
             if result is not None:
                 return result
@@ -49,9 +50,19 @@ class GopeedTransport:
         return self._parse(resp, method, path, kwargs, headers)
 
     def _try_rediscover(self, method: str, path: str, kwargs: dict, headers: dict) -> dict | None:
-        """Attempt to rediscover Gopeed port and retry the request."""
+        """Attempt to rediscover Gopeed port and retry the request.
+
+        Triggered by:
+        - ConnectError / Timeout (in ``request``);
+        - HTTP 503 / any response >= 400 (unexpected proxy/middleware replies);
+        - 200 but non-JSON body (address hijacked / wrong endpoint).
+
+        Always clears the discovery cache first so the current port is
+        re-located after a Gopeed restart.
+        """
         if not self._rediscover_on_fail:
             return None
+        # 关键：任何重发现触发场景都先清缓存，再重新定位端口
         settings.reset_discovery_cache()
         new_url = settings.api_url.rstrip("/")
         if new_url == self.api_url:
@@ -67,32 +78,28 @@ class GopeedTransport:
             raise exceptions.GopeedConnectionError(
                 f"Cannot connect to Gopeed ({self.api_url}) after rediscovery."
             ) from exc2
-        else:
-            return self._parse(resp, method, path, kwargs, headers)
+        # 重试得到的响应（即使再次 >= 400）交给 _parse 完整解析。
+        # 若重试后仍失败，_parse 会再次调用 _try_rediscover，此时
+        # new_url == self.api_url，返回 None 后正常抛出错误，不会死循环。
+        return self._parse(resp, method, path, kwargs, headers)
 
     def _parse(self, resp: httpx.Response, method: str = "", path: str = "",
                kwargs: dict | None = None, headers: dict | None = None) -> dict:
-        """Parse Gopeed response, handling rediscovery on HTTP errors."""
+        """Parse Gopeed response, handling rediscovery on HTTP errors.
+
+        Rediscovery triggers (all routed through ``_try_rediscover`` so the
+        discovery cache is always reset):
+        - HTTP 503 / any response >= 400 (unexpected proxy/middleware replies)
+        - 200 but non-JSON body (address hijacked / wrong endpoint)
+        """
         kwargs = kwargs or {}
         headers = headers or {}
 
+        # 503 及其它 >= 400 的非预期响应：纳入重发现触发条件
         if self._rediscover_on_fail and resp.status_code >= 400:
-            settings.reset_discovery_cache()
-            new_url = settings.api_url.rstrip("/")
-            if new_url != self.api_url:
-                logger.info("Rediscovered Gopeed at %s after HTTP %s", new_url, resp.status_code)
-                self.api_url = new_url
-                self._client.close()
-                self._client = httpx.Client(timeout=self.timeout, proxy=None)
-                if method:
-                    try:
-                        resp = self._client.request(
-                            method, f"{self.api_url}{path}", headers=headers, **kwargs
-                        )
-                    except httpx.HTTPError:
-                        pass
-                    else:
-                        return self._parse(resp)
+            result = self._try_rediscover(method, path, kwargs, headers)
+            if result is not None:
+                return result
 
         if resp.status_code >= 400:
             raise exceptions.GopeedResponseError(
@@ -103,6 +110,11 @@ class GopeedTransport:
         try:
             body = resp.json()
         except ValueError as exc:
+            # 200 但非 JSON：属于非预期响应，也尝试一次重发现
+            if self._rediscover_on_fail:
+                result = self._try_rediscover(method, path, kwargs, headers)
+                if result is not None:
+                    return result
             raise exceptions.GopeedResponseError(
                 f"Gopeed returned non-JSON response: {resp.text[:200]}"
             ) from exc
