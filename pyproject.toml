@@ -26,8 +26,11 @@ Repository = "https://github.com/Panda-Young/gopeed-mcp-server"
 Issues = "https://github.com/Panda-Young/gopeed-mcp-server/issues"
 
 [project.scripts]
-gopeed-mcp-server = "server:main"
+gopeed-mcp-server = "gopeed_mcp_server.server:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["gopeed_mcp_server*"]
 
 [tool.setuptools]
-py-modules = ["server", "gopeed_client", "config"]
 license-files = ["LICENSE"]

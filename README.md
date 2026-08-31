@@ -138,8 +138,15 @@ VS Code 1.99+ 使用专用的 `mcp.json`（而不是 `settings.json` 的 `mcpSer
 ```
 gopeed-mcp-server/
 ├── server.py              # MCP Server 主入口，定义所有 MCP Tools
-├── gopeed_client.py       # Gopeed REST API 客户端封装
-├── config.py              # 配置管理（从环境变量读取）
+├── src/
+│   └── gopeed_mcp_server/ # Python package 源码
+│       ├── __init__.py    # 包入口，导出公共 API
+│       ├── config.py      # 配置管理（从环境变量读取）
+│       ├── constants.py   # 状态常量定义
+│       ├── client.py      # Gopeed REST API 客户端封装
+│       ├── transport.py   # HTTP 传输层（自动重发现）
+│       ├── discovery.py   # 端口自动发现逻辑
+│       └── exceptions.py  # 异常类型定义
 ├── pyproject.toml         # 打包配置（提供 gopeed-mcp-server 命令）
 ├── requirements.txt       # Python 依赖
 ├── .env.example           # 环境变量示例
