@@ -5,7 +5,7 @@
       "command": "uvx",
       "args": ["gopeed-mcp-server"],
       "env": {
-        "GOPEED_API_URL": "http://127.0.0.1/api/v1"
+        "GOPEED_API_URL": "http://127.0.0.1:7766/api/v1"
       }
     }
   }

@@ -3,8 +3,9 @@
 
 通过环境变量配置 Gopeed MCP Server 的运行参数。
 
-Gopeed 每次重启都会随机分配一个本地 API 端口，且端口不会持久化到可读配置。
-因此本模块支持「自动发现」：当未显式配置具体端口时，通过 netstat 定位
+Gopeed 默认每次重启都会随机分配一个本地 API 端口。
+如果 Gopeed 配置了固定端口（如 7766），可直接在 URL 中指定端口，跳过自动发现。
+当未显式配置具体端口时，本模块支持「自动发现」：通过 netstat 定位
 gopeed.exe 实际监听的回环端口，并验证其响应标准 Gopeed API。
 """
 
@@ -13,6 +14,7 @@ import subprocess
 
 # 如果 GOPEED_API_URL 未指定具体端口（只给 host 或无路径），则触发自动发现。
 # 显式配置完整 URL（含端口）时优先使用，不做发现。
+# 默认配置为 http://127.0.0.1:7766/api/v1（Gopeed 固定端口）。
 _AUTO_DISCOVER = os.getenv("GOPEED_API_AUTO_DISCOVER", "1").lower() in ("1", "true", "yes")
 
 # 候选进程名（用于在 netstat 结果中识别 Gopeed 监听端口）
@@ -29,8 +31,8 @@ class Settings:
             # 用户显式配置了 URL：若包含端口则直接使用，否则走自动发现
             self._explicit_url = raw
         else:
-            # 未配置：使用默认 host 并自动发现端口
-            self._explicit_url = "http://127.0.0.1/api/v1"
+            # 未配置：使用默认地址（端口 7766，Gopeed 已配置为固定端口）
+            self._explicit_url = "http://127.0.0.1:7766/api/v1"
         # API 令牌（可选，Gopeed 配置了令牌时需要）
         self.api_token: str | None = os.getenv("GOPEED_API_TOKEN") or None
         # HTTP 请求超时（秒）
@@ -56,10 +58,14 @@ class Settings:
         self._discover_attempted = False
 
     def _discover_url(self) -> str | None:
-        """通过 netstat 定位 gopeed 监听端口并验证 API。"""
-        if self._discover_attempted and self._discovered_url is not None:
+        """通过 netstat 定位 gopeed 监听端口并验证 API。
+
+        注意：发现失败时（如 MCP server 启动时 Gopeed 尚未监听）不缓存
+        None，允许后续请求重新探测，避免一次性失败后永久失效。
+        """
+        if self._discovered_url is not None:
             return self._discovered_url
-        self._discover_attempted = True
+        # 不缓存失败结果：每次都实际探测，直到成功定位端口
         ports = self._find_gopeed_ports()
         for port in ports:
             url = f"http://127.0.0.1:{port}/api/v1"

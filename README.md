@@ -59,7 +59,7 @@
    copy .env.example .env
    ```
    可用环境变量：
-   - `GOPEED_API_URL`：Gopeed API 地址。**推荐留空端口**（默认 `http://127.0.0.1/api/v1`），server 会自动发现 Gopeed 当前端口（Gopeed 每次重启都会随机换端口，自动发现可免去手动改配置）。仅在确需固定时才写 `http://127.0.0.1:<端口>/api/v1`
+   - `GOPEED_API_URL`：Gopeed API 地址。默认 `http://127.0.0.1:7766/api/v1`（端口 7766 为固定端口）。若 Gopeed 使用随机端口，可留空端口部分（如 `http://127.0.0.1/api/v1`），server 会自动发现 Gopeed 实际端口。
    - `GOPEED_API_TOKEN`：API 令牌（可选，Gopeed 配置了令牌时需要）
    - `GOPEED_TIMEOUT`：请求超时秒数，默认 `10`
 
@@ -81,7 +81,7 @@ VS Code 1.99+ 使用专用的 `mcp.json`（而不是 `settings.json` 的 `mcpSer
          "command": "uvx",
          "args": ["gopeed-mcp-server"],
          "env": {
-           "GOPEED_API_URL": "http://127.0.0.1/api/v1"
+           "GOPEED_API_URL": "http://127.0.0.1:7766/api/v1"
          }
        }
      }
@@ -97,7 +97,7 @@ VS Code 1.99+ 使用专用的 `mcp.json`（而不是 `settings.json` 的 `mcpSer
          "command": "python",
          "args": ["<仓库绝对路径>/server.py"],
          "env": {
-           "GOPEED_API_URL": "http://127.0.0.1/api/v1"
+           "GOPEED_API_URL": "http://127.0.0.1:7766/api/v1"
          }
        }
      }
@@ -105,7 +105,7 @@ VS Code 1.99+ 使用专用的 `mcp.json`（而不是 `settings.json` 的 `mcpSer
    ```
 
    > **注意**：
-   > - `GOPEED_API_URL` 推荐留空端口（`http://127.0.0.1/api/v1`），server 会自动发现 Gopeed 当前监听端口；若已固定端口则写完整地址。
+   > - `GOPEED_API_URL` 默认使用 `http://127.0.0.1:7766/api/v1`（端口 7766 为固定端口）；若使用随机端口可留空端口部分，server 会自动发现 Gopeed 当前监听端口。
    > - 如果 Gopeed 配置了 API 令牌，在 `env` 中添加 `"GOPEED_API_TOKEN": "你的令牌"`。
    > - Windows 沙箱（sandbox）目前不可用，本地 stdio server 直接运行。
 

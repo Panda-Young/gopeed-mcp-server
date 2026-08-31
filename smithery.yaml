@@ -9,7 +9,7 @@ startCommand:
       GOPEED_API_URL:
         type: string
         description: Gopeed REST API base URL. Leave the port empty so the server auto-discovers the random Gopeed port (http://127.0.0.1/api/v1).
-        default: http://127.0.0.1/api/v1
+        default: http://127.0.0.1:7766/api/v1
       GOPEED_API_TOKEN:
         type: string
         description: Optional Gopeed API token, only needed if Gopeed enforces token auth.
@@ -24,7 +24,7 @@ startCommand:
       command: 'uvx',
       args: ['gopeed-mcp-server'],
       env: {
-        GOPEED_API_URL: config.GOPEED_API_URL || 'http://127.0.0.1/api/v1',
+        GOPEED_API_URL: config.GOPEED_API_URL || 'http://127.0.0.1:7766/api/v1',
         GOPEED_API_TOKEN: config.GOPEED_API_TOKEN || '',
         GOPEED_TIMEOUT: String(config.GOPEED_TIMEOUT || 10)
       }
