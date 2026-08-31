@@ -61,7 +61,7 @@
    copy .env.example .env
    ```
    可用环境变量：
-   - `GOPEED_API_URL`：Gopeed API 地址。默认 `http://127.0.0.1:7766/api/v1`（端口 7766 为固定端口）。若 Gopeed 使用随机端口，可留空端口部分（如 `http://127.0.0.1/api/v1`），server 会自动发现 Gopeed 实际端口。
+   - `GOPEED_API_URL`：Gopeed API 地址。默认 `http://127.0.0.1:7766/api/v1`（端口 7766 为默认固定端口）。若你的 Gopeed 使用随机端口，可留空端口部分（如 `http://127.0.0.1/api/v1`），server 会自动发现 Gopeed 实际端口。
    - `GOPEED_API_TOKEN`：API 令牌（可选，Gopeed 配置了令牌时需要）
    - `GOPEED_TIMEOUT`：请求超时秒数，默认 `10`
 

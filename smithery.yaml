@@ -8,7 +8,7 @@ startCommand:
     properties:
       GOPEED_API_URL:
         type: string
-        description: Gopeed REST API base URL. Leave the port empty so the server auto-discovers the random Gopeed port (http://127.0.0.1/api/v1).
+        description: Gopeed REST API base URL. Default is the fixed port 7766. If your Gopeed uses a random port, leave the port empty so the server auto-discovers it (http://127.0.0.1/api/v1).
         default: http://127.0.0.1:7766/api/v1
       GOPEED_API_TOKEN:
         type: string
